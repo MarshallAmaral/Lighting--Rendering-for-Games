@@ -58,6 +58,7 @@ int main()
 
 	int player1_score = 0;
 	int player2_score = 0;
+	float restart_timer = 0.0f;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Pong");
     InitAudioDevice();
@@ -107,39 +108,74 @@ int main()
             PlaySound(coin);
         }
 
-		// Here I will add the scoring logic for player 1 and player 2
 
-		if (ball_rec.x <= 0.0f)
+        // Here I will add the scoring logic for player 1 and player 2
+
+		if (player1_score == 5 || player2_score == 5)
 		{
-			player2_score++;
-			ResetBall(ball_position, ball_direction);
+			restart_timer += dt; // I added a timer to restart the game after a player wins
+			if (restart_timer >= 3.0f) 
+			{
+				player1_score = 0;
+				player2_score = 0;
+				ResetBall(ball_position, ball_direction);
+				restart_timer = 0.0f;
+			}
 		}
-		else if (ball_rec.x + ball_rec.width >= SCREEN_WIDTH)
-		{
-			player1_score++; 
-			ResetBall(ball_position, ball_direction);
-		}
+        else
+        {
+            if (ball_rec.x <= 0.0f)
+            {
+                player2_score++;
+				test_score = 0; 
+                ResetBall(ball_position, ball_direction);
+            }
+            else if (ball_rec.x + ball_rec.width >= SCREEN_WIDTH)
+            {
+                player1_score++;
+                test_score = 0;
+                ResetBall(ball_position, ball_direction);
+            }
+        }
+
 
 
         // Update ball position after collision resolution, then render
         ball_position = ball_position + ball_direction * BALL_SPEED * dt;
 
+		// Putting this code here allows the screen to show who wins before restarting the game
+
         BeginDrawing();
         ClearBackground(BLACK);
-        DrawRectangleRec(BallRec(ball_position), WHITE);
-        DrawRectangleRec(PaddleRec(paddle1_position), WHITE);
-        DrawRectangleRec(PaddleRec(paddle2_position), WHITE);
 
-        // Text format requires you to put a '%i' wherever you want an integer, then add said integer after the comma
-        const char* test_score_text = TextFormat("Test Score: %i ", test_score);
+        if (player1_score == 5)
+        {
+            // Player 1 wins
+            DrawText("Player 1 Wins!", SCREEN_WIDTH * 0.5f - MeasureText("Player 1 Wins!", 40) * 0.5f, SCREEN_HEIGHT * 0.5f - 20, 40, GREEN);
 
-        const char* player1_score_text = TextFormat("Player 1: %i", player1_score); // here we are adding player 1 text
-		const char* player2_score_text = TextFormat("Player 2: %i", player2_score); // here we are adding player 2 text
 
-        // We can measure our text for more exact positioning. This puts our score in the center of our screen!
-        DrawText(test_score_text, SCREEN_WIDTH * 0.5f - MeasureText(test_score_text, 20) * 0.5f, 50, 20, BLUE);
-		DrawText(player1_score_text, 50, 50, 20, BLUE); // here we are drawing player 1 score on the left side of the screen
-		DrawText(player2_score_text, SCREEN_WIDTH - MeasureText(player2_score_text, 20) - 50, 50, 20, BLUE); // here we are drawing player 2 score on the right side of the screen
+        }
+        else if (player2_score == 5)
+        {
+            // Player 2 wins
+            DrawText("Player 2 Wins!", SCREEN_WIDTH * 0.5f - MeasureText("Player 2 Wins!", 40) * 0.5f, SCREEN_HEIGHT * 0.5f - 20, 40, RED);
+        }
+        else {
+
+            DrawRectangleRec(BallRec(ball_position), WHITE);
+            DrawRectangleRec(PaddleRec(paddle1_position), WHITE);
+            DrawRectangleRec(PaddleRec(paddle2_position), WHITE);
+
+            // Text format requires you to put a '%i' wherever you want an integer, then add said integer after the comma
+            const char* test_score_text = TextFormat("Test Score: %i ", test_score);
+            const char* player1_score_text = TextFormat("Player 1: %i", player1_score); // here we are adding player 1 text
+            const char* player2_score_text = TextFormat("Player 2: %i", player2_score); // here we are adding player 2 text
+
+            // We can measure our text for more exact positioning. This puts our score in the center of our screen!
+            DrawText(test_score_text, SCREEN_WIDTH * 0.5f - MeasureText(test_score_text, 20) * 0.5f, 50, 20, BLUE);
+            DrawText(player1_score_text, 50, 50, 20, GREEN); // here we are drawing player 1 score on the left side of the screen
+            DrawText(player2_score_text, SCREEN_WIDTH - MeasureText(player2_score_text, 20) - 50, 50, 20, RED); // here we are drawing player 2 score on the right side of the screen
+        }
         EndDrawing();
     }
 
