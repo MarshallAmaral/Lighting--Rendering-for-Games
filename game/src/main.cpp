@@ -64,7 +64,7 @@ int main()
     InitAudioDevice();
     SetTargetFPS(60);
 
-    Sound paddle = LoadSound("./assets/audio/sound_ping.mp3");
+	Sound paddle = LoadSound("./assets/audio/sound_ping.mp3"); // changed the sound to a ping sound for the paddle
 	Sound wall = LoadSound("./assets/audio/sound_pop.mp3");
 	
     while (!WindowShouldClose())
@@ -98,12 +98,12 @@ int main()
         if (ball_rec.x <= 0.0f || ball_rec.x + ball_rec.width >= SCREEN_WIDTH)
         {
             ball_direction.x *= -1.0f;
-			PlaySound(wall);
+			PlaySound(wall); // Added the wall sounds 
         }
         if (ball_rec.y <= 0.0f || ball_rec.y + ball_rec.height >= SCREEN_HEIGHT)
         {
             ball_direction.y *= -1.0f;
-            PlaySound(wall);
+			PlaySound(wall); // Added the wall sounds
         }
         if (CheckCollisionRecs(ball_rec, paddle1_rec) || CheckCollisionRecs(ball_rec, paddle2_rec))
         {
